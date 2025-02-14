@@ -11,6 +11,7 @@ const Index = () => {
   const [connected, setConnected] = useState(false);
   const { nfts, isLoading, createNFT } = useNFTs();
   const queryClient = useQueryClient();
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(-1);
 
   const createSampleNFTs = async () => {
     const sampleNFTs = [
@@ -60,6 +61,22 @@ const Index = () => {
     }
   }, [nfts]);
 
+  const handlePlayTrack = (index: number) => {
+    setCurrentTrackIndex(index);
+  };
+
+  const handleNextTrack = () => {
+    if (nfts && currentTrackIndex < nfts.length - 1) {
+      setCurrentTrackIndex(currentTrackIndex + 1);
+    }
+  };
+
+  const handlePreviousTrack = () => {
+    if (currentTrackIndex > 0) {
+      setCurrentTrackIndex(currentTrackIndex - 1);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-secondary to-black flex items-center justify-center">
@@ -67,6 +84,8 @@ const Index = () => {
       </div>
     );
   }
+
+  const currentTrack = nfts && currentTrackIndex >= 0 ? nfts[currentTrackIndex] : undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
@@ -99,14 +118,14 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
         <h3 className="text-2xl font-semibold text-white mb-8">Featured NFTs</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {nfts?.map((nft) => (
+          {nfts?.map((nft, index) => (
             <div key={nft.id} className="animate-fade-in">
               <NFTCard
                 title={nft.title}
                 artist={nft.artist}
                 image={nft.image_url}
                 price={nft.price.toString()}
-                onPlay={() => console.log(`Playing ${nft.title}`)}
+                onPlay={() => handlePlayTrack(index)}
               />
             </div>
           ))}
@@ -114,7 +133,11 @@ const Index = () => {
       </section>
 
       {/* Music Player */}
-      <MusicPlayer />
+      <MusicPlayer 
+        currentTrack={currentTrack}
+        onNext={currentTrackIndex < (nfts?.length || 0) - 1 ? handleNextTrack : undefined}
+        onPrevious={currentTrackIndex > 0 ? handlePreviousTrack : undefined}
+      />
     </div>
   );
 };
