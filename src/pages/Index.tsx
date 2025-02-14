@@ -1,15 +1,64 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NFTCard from "@/components/NFTCard";
 import MusicPlayer from "@/components/MusicPlayer";
 import { Wallet } from "lucide-react";
 import { useNFTs } from "@/hooks/useNFTs";
 import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const Index = () => {
   const [connected, setConnected] = useState(false);
-  const { nfts, isLoading } = useNFTs();
+  const { nfts, isLoading, createNFT } = useNFTs();
   const queryClient = useQueryClient();
+
+  const createSampleNFTs = async () => {
+    const sampleNFTs = [
+      {
+        title: "Cosmic Harmony",
+        artist: "Stellar Beats",
+        price: 2.5,
+        image_url: "https://images.unsplash.com/photo-1614149162883-504ce4d13909",
+        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav",
+        is_listed: true,
+        metadata: { genre: "Electronic", duration: "3:45" }
+      },
+      {
+        title: "Desert Nights",
+        artist: "Oasis Dreams",
+        price: 1.8,
+        image_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
+        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther30.wav",
+        is_listed: true,
+        metadata: { genre: "Ambient", duration: "4:20" }
+      },
+      {
+        title: "Urban Pulse",
+        artist: "City Soundscape",
+        price: 3.2,
+        image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4",
+        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/ImperialMarch60.wav",
+        is_listed: true,
+        metadata: { genre: "Hip Hop", duration: "2:55" }
+      }
+    ];
+
+    try {
+      for (const nft of sampleNFTs) {
+        await createNFT(nft);
+      }
+      toast.success("Sample NFTs created successfully!");
+    } catch (error) {
+      console.error("Error creating sample NFTs:", error);
+      toast.error("Failed to create sample NFTs");
+    }
+  };
+
+  useEffect(() => {
+    if (!nfts || nfts.length === 0) {
+      createSampleNFTs();
+    }
+  }, [nfts]);
 
   if (isLoading) {
     return (
