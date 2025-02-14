@@ -23,13 +23,14 @@ export const useNFTs = () => {
   })
 
   const { mutate: createNFT } = useMutation({
-    mutationFn: async (nft: Omit<Database['public']['Tables']['nfts']['Insert'], 'id'>) => {
-      // Generate a UUID for the NFT
+    mutationFn: async (nft: Omit<Database['public']['Tables']['nfts']['Insert'], 'id' | 'created_at'>) => {
+      // Generate a UUID for the NFT and current timestamp
       const id = crypto.randomUUID()
+      const created_at = new Date().toISOString()
       
       const { data, error } = await supabase
         .from('nfts')
-        .insert({ ...nft, id })
+        .insert({ ...nft, id, created_at })
         .select()
         .single()
 
