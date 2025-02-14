@@ -3,40 +3,21 @@ import { useState } from "react";
 import NFTCard from "@/components/NFTCard";
 import MusicPlayer from "@/components/MusicPlayer";
 import { Wallet } from "lucide-react";
-
-const mockNFTs = [
-  {
-    id: 1,
-    title: "Ethereal Dreams",
-    artist: "Crystal Skies",
-    image: "/placeholder.svg",
-    price: "2.5"
-  },
-  {
-    id: 2,
-    title: "Lunar Eclipse",
-    artist: "Midnight Wave",
-    image: "/placeholder.svg",
-    price: "1.8"
-  },
-  {
-    id: 3,
-    title: "Solar Flares",
-    artist: "Nova Beats",
-    image: "/placeholder.svg",
-    price: "3.2"
-  },
-  {
-    id: 4,
-    title: "Ocean Waves",
-    artist: "Deep Blue",
-    image: "/placeholder.svg",
-    price: "2.0"
-  }
-];
+import { useNFTs } from "@/hooks/useNFTs";
+import { useQueryClient } from "@tanstack/react-query";
 
 const Index = () => {
   const [connected, setConnected] = useState(false);
+  const { nfts, isLoading } = useNFTs();
+  const queryClient = useQueryClient();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-secondary to-black flex items-center justify-center">
+        <div className="text-white">Loading NFTs...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
@@ -69,13 +50,13 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
         <h3 className="text-2xl font-semibold text-white mb-8">Featured NFTs</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {mockNFTs.map((nft) => (
+          {nfts?.map((nft) => (
             <div key={nft.id} className="animate-fade-in">
               <NFTCard
                 title={nft.title}
                 artist={nft.artist}
-                image={nft.image}
-                price={nft.price}
+                image={nft.image_url}
+                price={nft.price.toString()}
                 onPlay={() => console.log(`Playing ${nft.title}`)}
               />
             </div>
