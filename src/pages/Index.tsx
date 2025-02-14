@@ -20,7 +20,7 @@ const Index = () => {
         artist: "Stellar Beats",
         price: 2.5,
         image_url: "https://images.unsplash.com/photo-1614149162883-504ce4d13909",
-        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/StarWars60.wav",
+        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Shipping_Lanes.mp3",
         is_listed: true,
         metadata: { genre: "Electronic", duration: "3:45" }
       },
@@ -29,7 +29,7 @@ const Index = () => {
         artist: "Oasis Dreams",
         price: 1.8,
         image_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
-        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/PinkPanther30.wav",
+        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3",
         is_listed: true,
         metadata: { genre: "Ambient", duration: "4:20" }
       },
@@ -38,7 +38,7 @@ const Index = () => {
         artist: "City Soundscape",
         price: 3.2,
         image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4",
-        audio_url: "https://www2.cs.uic.edu/~i101/SoundFiles/ImperialMarch60.wav",
+        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Drifter/Chad_Crouch_-_Drifter.mp3",
         is_listed: true,
         metadata: { genre: "Hip Hop", duration: "2:55" }
       }
