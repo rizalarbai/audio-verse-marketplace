@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
 interface WalletData {
@@ -27,6 +27,8 @@ const Dashboard = () => {
       // Generate new Solana keypair
       const newWallet = Keypair.generate();
       
+      console.log("Generated new wallet with public key:", newWallet.publicKey.toString());
+      
       // Store wallet info in Supabase
       const { data, error } = await supabase
         .from('wallets')
@@ -38,7 +40,12 @@ const Dashboard = () => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      console.log("Wallet stored in Supabase, requesting airdrop...");
 
       // Request airdrop of 1 SOL (only works on devnet)
       const signature = await connection.requestAirdrop(
@@ -46,11 +53,15 @@ const Dashboard = () => {
         LAMPORTS_PER_SOL // 1 SOL
       );
       
+      console.log("Airdrop requested, confirming transaction...");
+      
       // Confirm transaction
       await connection.confirmTransaction(signature);
 
       // Get wallet balance
       const balance = await connection.getBalance(newWallet.publicKey);
+
+      console.log("Transaction confirmed, balance:", balance / LAMPORTS_PER_SOL);
 
       setWalletInfo({
         publicKey: newWallet.publicKey.toString(),
@@ -58,9 +69,14 @@ const Dashboard = () => {
       });
 
       toast.success("Wallet generated successfully!");
-    } catch (error) {
-      console.error("Error generating wallet:", error);
-      toast.error("Failed to generate wallet");
+    } catch (error: any) {
+      console.error("Detailed error generating wallet:", {
+        error,
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+      });
+      toast.error(`Failed to generate wallet: ${error.message}`);
     } finally {
       setLoading(false);
     }
@@ -80,6 +96,7 @@ const Dashboard = () => {
           // No wallet found
           return;
         }
+        console.error("Error loading wallet:", error);
         throw error;
       }
 
@@ -100,12 +117,12 @@ const Dashboard = () => {
     }
   };
 
-  // Load wallet info when component mounts
-  useState(() => {
+  // Fixed: Changed useState to useEffect for initial wallet loading
+  useEffect(() => {
     if (user) {
       loadWallet();
     }
-  });
+  }, [user]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
