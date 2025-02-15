@@ -3,14 +3,109 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { useState } from "react";
+import { supabase } from "@/lib/supabase";
+
+interface WalletData {
+  publicKey: string;
+  secretKey: string;
+}
 
 const Dashboard = () => {
   const { user, signOut } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [walletInfo, setWalletInfo] = useState<{ publicKey: string; balance: number } | null>(null);
 
-  const generateWallet = () => {
-    // This is where we'll implement Solana wallet generation
-    toast.info("Wallet generation coming soon!");
+  // Initialize Solana connection (using devnet for testing)
+  const connection = new Connection("https://api.devnet.solana.com", "confirmed");
+
+  const generateWallet = async () => {
+    try {
+      setLoading(true);
+      
+      // Generate new Solana keypair
+      const newWallet = Keypair.generate();
+      
+      // Store wallet info in Supabase
+      const { data, error } = await supabase
+        .from('wallets')
+        .insert({
+          user_id: user?.id,
+          public_key: newWallet.publicKey.toString(),
+          secret_key: Array.from(newWallet.secretKey), // Store as array of numbers
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Request airdrop of 1 SOL (only works on devnet)
+      const signature = await connection.requestAirdrop(
+        newWallet.publicKey,
+        LAMPORTS_PER_SOL // 1 SOL
+      );
+      
+      // Confirm transaction
+      await connection.confirmTransaction(signature);
+
+      // Get wallet balance
+      const balance = await connection.getBalance(newWallet.publicKey);
+
+      setWalletInfo({
+        publicKey: newWallet.publicKey.toString(),
+        balance: balance / LAMPORTS_PER_SOL,
+      });
+
+      toast.success("Wallet generated successfully!");
+    } catch (error) {
+      console.error("Error generating wallet:", error);
+      toast.error("Failed to generate wallet");
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const loadWallet = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('wallets')
+        .select('public_key')
+        .eq('user_id', user?.id)
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          // No wallet found
+          return;
+        }
+        throw error;
+      }
+
+      if (data) {
+        const publicKey = new PublicKey(data.public_key);
+        const balance = await connection.getBalance(publicKey);
+        
+        setWalletInfo({
+          publicKey: data.public_key,
+          balance: balance / LAMPORTS_PER_SOL,
+        });
+      }
+    } catch (error) {
+      console.error("Error loading wallet:", error);
+      toast.error("Failed to load wallet");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load wallet info when component mounts
+  useState(() => {
+    if (user) {
+      loadWallet();
+    }
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
@@ -41,7 +136,22 @@ const Dashboard = () => {
               <CardDescription>Manage your Solana wallet</CardDescription>
             </CardHeader>
             <CardContent>
-              <Button onClick={generateWallet}>Generate Wallet</Button>
+              {walletInfo ? (
+                <div className="space-y-4">
+                  <div>
+                    <p className="text-sm text-gray-400">Public Key</p>
+                    <p className="text-gray-300 break-all">{walletInfo.publicKey}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-400">Balance</p>
+                    <p className="text-gray-300">{walletInfo.balance} SOL</p>
+                  </div>
+                </div>
+              ) : (
+                <Button onClick={generateWallet} disabled={loading}>
+                  {loading ? "Generating..." : "Generate Wallet"}
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
