@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import { MusicNFTForm } from "@/components/MusicNFTForm";
 
 interface WalletData {
   publicKey: string;
@@ -138,41 +139,50 @@ const Dashboard = () => {
       <main className="container mx-auto px-4 py-8">
         <h2 className="text-3xl font-bold text-white mb-8">Dashboard</h2>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Profile</CardTitle>
-              <CardDescription>Your account details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-gray-300">Email: {user?.email}</p>
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-1 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Profile</CardTitle>
+                <CardDescription>Your account details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-gray-300">Email: {user?.email}</p>
+              </CardContent>
+            </Card>
 
-          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
-            <CardHeader>
-              <CardTitle className="text-white">Wallet</CardTitle>
-              <CardDescription>Manage your Solana wallet</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {walletInfo ? (
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-sm text-gray-400">Public Key</p>
-                    <p className="text-gray-300 break-all">{walletInfo.publicKey}</p>
+            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+              <CardHeader>
+                <CardTitle className="text-white">Wallet</CardTitle>
+                <CardDescription>Manage your Solana wallet</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {walletInfo ? (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm text-gray-400">Public Key</p>
+                      <p className="text-gray-300 break-all">{walletInfo.publicKey}</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400">Balance</p>
+                      <p className="text-gray-300">{walletInfo.balance} SOL</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-400">Balance</p>
-                    <p className="text-gray-300">{walletInfo.balance} SOL</p>
-                  </div>
-                </div>
-              ) : (
-                <Button onClick={generateWallet} disabled={loading}>
-                  {loading ? "Generating..." : "Generate Wallet"}
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                ) : (
+                  <Button onClick={generateWallet} disabled={loading}>
+                    {loading ? "Generating..." : "Generate Wallet"}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+
+          {walletInfo && (
+            <div>
+              <h3 className="text-2xl font-bold text-white mb-4">Create Music NFT</h3>
+              <MusicNFTForm />
+            </div>
+          )}
         </div>
       </main>
     </div>
