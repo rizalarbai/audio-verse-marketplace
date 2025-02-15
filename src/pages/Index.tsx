@@ -1,14 +1,17 @@
 
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import NFTCard from "@/components/NFTCard";
 import MusicPlayer from "@/components/MusicPlayer";
 import { Wallet } from "lucide-react";
 import { useNFTs } from "@/hooks/useNFTs";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const [connected, setConnected] = useState(false);
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const { nfts, isLoading, createNFT } = useNFTs();
   const queryClient = useQueryClient();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(-1);
@@ -93,13 +96,23 @@ const Index = () => {
       <header className="container mx-auto py-6 px-4">
         <nav className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">AudioVerse</h1>
-          <button
-            onClick={() => setConnected(!connected)}
-            className="premium-button flex items-center space-x-2"
-          >
-            <Wallet className="w-5 h-5" />
-            <span>{connected ? "Connected" : "Connect Wallet"}</span>
-          </button>
+          {user ? (
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="premium-button flex items-center space-x-2"
+            >
+              <Wallet className="w-5 h-5" />
+              <span>Dashboard</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate('/auth')}
+              className="premium-button flex items-center space-x-2"
+            >
+              <Wallet className="w-5 h-5" />
+              <span>Sign In</span>
+            </button>
+          )}
         </nav>
       </header>
 
