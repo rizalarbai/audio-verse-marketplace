@@ -29,13 +29,16 @@ const Dashboard = () => {
       
       console.log("Generated new wallet with public key:", newWallet.publicKey.toString());
       
+      // Convert secret key to string for storage
+      const secretKeyString = JSON.stringify(Array.from(newWallet.secretKey));
+      
       // Store wallet info in Supabase
       const { data, error } = await supabase
         .from('wallets')
         .insert({
           user_id: user?.id,
           public_key: newWallet.publicKey.toString(),
-          secret_key: Array.from(newWallet.secretKey), // Store as array of numbers
+          secret_key: secretKeyString, // Store as JSON string
         })
         .select()
         .single();
@@ -117,7 +120,6 @@ const Dashboard = () => {
     }
   };
 
-  // Fixed: Changed useState to useEffect for initial wallet loading
   useEffect(() => {
     if (user) {
       loadWallet();
