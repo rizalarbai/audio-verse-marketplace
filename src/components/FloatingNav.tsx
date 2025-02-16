@@ -18,19 +18,31 @@ export function FloatingNav() {
     >
       <Button
         variant="ghost"
-        className="bg-primary/20 hover:bg-primary/40 text-white flex gap-2 items-center"
+        className={`bg-primary/20 hover:bg-primary/40 text-white group ${
+          isMobile 
+            ? 'flex flex-col items-center gap-1 p-2'
+            : 'flex items-center gap-2'
+        }`}
         onClick={() => navigate('/')}
       >
-        <Home className="h-5 w-5" />
-        <span>Home</span>
+        <Home className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'}`} />
+        <span className={`text-sm ${isMobile ? 'block' : 'hidden group-hover:block'}`}>
+          Home
+        </span>
       </Button>
       <Button
         variant="ghost"
-        className="bg-primary/20 hover:bg-primary/40 text-white flex gap-2 items-center"
+        className={`bg-primary/20 hover:bg-primary/40 text-white group ${
+          isMobile 
+            ? 'flex flex-col items-center gap-1 p-2'
+            : 'flex items-center gap-2'
+        }`}
         onClick={() => navigate('/dashboard')}
       >
-        <Grid className="h-5 w-5" />
-        <span>Collection</span>
+        <Grid className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'}`} />
+        <span className={`text-sm ${isMobile ? 'block' : 'hidden group-hover:block'}`}>
+          Collection
+        </span>
       </Button>
     </div>
   );
