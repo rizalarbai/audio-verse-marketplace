@@ -148,7 +148,7 @@ export function MusicNFTForm() {
           <FormField
             control={form.control}
             name="audioFile"
-            render={({ field: { onChange, ...field } }) => (
+            render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
                 <FormLabel className="text-white">Audio File</FormLabel>
                 <FormControl>
@@ -173,7 +173,7 @@ export function MusicNFTForm() {
           <FormField
             control={form.control}
             name="coverArt"
-            render={({ field: { onChange, ...field } }) => (
+            render={({ field: { value, onChange, ...field } }) => (
               <FormItem>
                 <FormLabel className="text-white">Cover Art</FormLabel>
                 <FormControl>
