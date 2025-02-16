@@ -7,6 +7,7 @@ import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.j
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { MusicNFTForm } from "@/components/MusicNFTForm";
+import { FloatingNav } from "@/components/FloatingNav";
 
 interface WalletData {
   publicKey: string;
@@ -129,6 +130,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
+      <FloatingNav />
       <header className="container mx-auto py-6 px-4">
         <nav className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">AudioVerse</h1>
