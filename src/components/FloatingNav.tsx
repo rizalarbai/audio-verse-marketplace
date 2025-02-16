@@ -18,19 +18,19 @@ export function FloatingNav() {
     >
       <Button
         variant="ghost"
-        size="icon"
-        className="bg-primary/20 hover:bg-primary/40 text-white"
+        className="bg-primary/20 hover:bg-primary/40 text-white flex gap-2 items-center"
         onClick={() => navigate('/')}
       >
         <Home className="h-5 w-5" />
+        <span>Home</span>
       </Button>
       <Button
         variant="ghost"
-        size="icon"
-        className="bg-primary/20 hover:bg-primary/40 text-white"
+        className="bg-primary/20 hover:bg-primary/40 text-white flex gap-2 items-center"
         onClick={() => navigate('/dashboard')}
       >
         <Grid className="h-5 w-5" />
+        <span>Collection</span>
       </Button>
     </div>
   );
