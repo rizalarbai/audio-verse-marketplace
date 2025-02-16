@@ -7,7 +7,7 @@ import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.j
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { MusicNFTForm } from "@/components/MusicNFTForm";
-import { FloatingNav } from "@/components/FloatingNav";
+import { Plus } from "lucide-react";
 
 interface WalletData {
   publicKey: string;
@@ -130,7 +130,6 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
-      <FloatingNav />
       <header className="container mx-auto py-6 px-4">
         <nav className="flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">AudioVerse</h1>
@@ -139,46 +138,53 @@ const Dashboard = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <h2 className="text-3xl font-bold text-white mb-8">Dashboard</h2>
-        
         <div className="grid grid-cols-1 gap-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Profile</CardTitle>
-                <CardDescription>Your account details</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-300">Email: {user?.email}</p>
-              </CardContent>
-            </Card>
+          {/* Profile Details Frame */}
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white">Profile Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p className="text-gray-300">
+                <span className="text-gray-400">Name:</span> {user?.user_metadata?.full_name || "Not Set"}
+              </p>
+              <p className="text-gray-300">
+                <span className="text-gray-400">Email:</span> {user?.email}
+              </p>
+              <p className="text-gray-300">
+                <span className="text-gray-400">Wallet Address:</span> {walletInfo?.publicKey || "No wallet generated"}
+              </p>
+              <p className="text-gray-300">
+                <span className="text-gray-400">Wallet Balance:</span> {walletInfo ? `${walletInfo.balance} SOL` : "N/A"}
+              </p>
+              <p className="text-gray-300">
+                <span className="text-gray-400">Point Balance:</span> 0 Points
+              </p>
+              {!walletInfo && (
+                <Button onClick={generateWallet} disabled={loading}>
+                  {loading ? "Generating..." : "Generate Wallet"}
+                </Button>
+              )}
+            </CardContent>
+          </Card>
 
-            <Card className="bg-white/10 backdrop-blur-lg border-white/20">
-              <CardHeader>
-                <CardTitle className="text-white">Wallet</CardTitle>
-                <CardDescription>Manage your Solana wallet</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {walletInfo ? (
-                  <div className="space-y-4">
-                    <div>
-                      <p className="text-sm text-gray-400">Public Key</p>
-                      <p className="text-gray-300 break-all">{walletInfo.publicKey}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-gray-400">Balance</p>
-                      <p className="text-gray-300">{walletInfo.balance} SOL</p>
-                    </div>
-                  </div>
-                ) : (
-                  <Button onClick={generateWallet} disabled={loading}>
-                    {loading ? "Generating..." : "Generate Wallet"}
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          </div>
+          {/* Artist List Frame */}
+          <Card className="bg-white/10 backdrop-blur-lg border-white/20">
+            <CardHeader>
+              <CardTitle className="text-white">Artist List</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-center py-8">
+                <p className="text-gray-400 mb-4">No artists registered yet</p>
+                <Button className="bg-primary hover:bg-primary/90">
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Artist
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
 
+          {/* Create Music NFT Section */}
           {walletInfo && (
             <div>
               <h3 className="text-2xl font-bold text-white mb-4">Create Music NFT</h3>

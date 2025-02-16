@@ -1,5 +1,5 @@
 
-import { Home, Grid } from "lucide-react";
+import { Home, Vinyl } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ export function FloatingNav() {
         }`}
         onClick={() => navigate('/dashboard')}
       >
-        <Grid className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'}`} />
+        <Vinyl className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'}`} />
         <span className={`text-sm ${isMobile ? 'block' : 'hidden group-hover:block'}`}>
           Collection
         </span>
