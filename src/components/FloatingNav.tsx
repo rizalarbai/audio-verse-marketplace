@@ -1,10 +1,12 @@
 
-import { Home } from "lucide-react";
+import { Home, Grid } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useNavigate } from "react-router-dom";
 
 export function FloatingNav() {
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
   return (
     <div 
@@ -18,9 +20,17 @@ export function FloatingNav() {
         variant="ghost"
         size="icon"
         className="bg-primary/20 hover:bg-primary/40 text-white"
-        onClick={() => window.location.href = '/'}
+        onClick={() => navigate('/')}
       >
         <Home className="h-5 w-5" />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="bg-primary/20 hover:bg-primary/40 text-white"
+        onClick={() => navigate('/dashboard')}
+      >
+        <Grid className="h-5 w-5" />
       </Button>
     </div>
   );
