@@ -19,7 +19,7 @@ export function FloatingNav() {
       className={`${
         isMobile 
           ? 'fixed bottom-0 left-0 right-0 bg-black/90 border-t border-white/10'
-          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg'
+          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg hover:w-40 w-[52px]'
       } z-40 transition-all duration-300`}
     >
       <div className={`flex ${isMobile ? 'justify-around py-2 px-4' : 'flex-col gap-2 p-4'}`}>
@@ -27,10 +27,10 @@ export function FloatingNav() {
           <Button
             key={path}
             variant="ghost"
-            className={`bg-primary/20 hover:bg-primary/40 text-white group transition-all duration-300 ${
+            className={`bg-primary/20 hover:bg-primary/40 text-white transition-all duration-300 w-full ${
               isMobile 
                 ? 'flex flex-col items-center gap-1 p-2'
-                : 'flex items-center justify-start gap-2 w-10 hover:w-32'
+                : 'flex items-center justify-start gap-2'
             }`}
             onClick={() => navigate(path)}
           >
@@ -38,7 +38,7 @@ export function FloatingNav() {
             <span className={`text-sm whitespace-nowrap ${
               isMobile 
                 ? 'block' 
-                : 'hidden group-hover:block'
+                : 'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
             }`}>
               {label}
             </span>
