@@ -1,70 +1,19 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import NFTCard from "@/components/NFTCard";
 import MusicPlayer from "@/components/MusicPlayer";
 import { Wallet } from "lucide-react";
 import { useNFTs } from "@/hooks/useNFTs";
-import { useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { nfts, isLoading, createNFT } = useNFTs(); // Added createNFT here
-  const queryClient = useQueryClient();
+  const { nfts, isLoading } = useNFTs();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(-1);
 
   const listedNFTs = nfts?.filter(nft => nft.is_listed) || [];
-
-  const createSampleNFTs = async () => {
-    const sampleNFTs = [
-      {
-        title: "Cosmic Harmony",
-        artist: "Stellar Beats",
-        price: 2.5,
-        image_url: "https://images.unsplash.com/photo-1614149162883-504ce4d13909",
-        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Arps/Chad_Crouch_-_Shipping_Lanes.mp3",
-        is_listed: true,
-        metadata: { genre: "Electronic", duration: "3:45" }
-      },
-      {
-        title: "Desert Nights",
-        artist: "Oasis Dreams",
-        price: 1.8,
-        image_url: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe",
-        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3",
-        is_listed: true,
-        metadata: { genre: "Ambient", duration: "4:20" }
-      },
-      {
-        title: "Urban Pulse",
-        artist: "City Soundscape",
-        price: 3.2,
-        image_url: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4",
-        audio_url: "https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Chad_Crouch/Drifter/Chad_Crouch_-_Drifter.mp3",
-        is_listed: true,
-        metadata: { genre: "Hip Hop", duration: "2:55" }
-      }
-    ];
-
-    try {
-      for (const nft of sampleNFTs) {
-        await createNFT(nft);
-      }
-      toast.success("Sample NFTs created successfully!");
-    } catch (error) {
-      console.error("Error creating sample NFTs:", error);
-      toast.error("Failed to create sample NFTs");
-    }
-  };
-
-  useEffect(() => {
-    if (!nfts || nfts.length === 0) {
-      createSampleNFTs();
-    }
-  }, [nfts]);
 
   const handlePlayTrack = (index: number) => {
     setCurrentTrackIndex(index);
@@ -132,19 +81,27 @@ const Index = () => {
       {/* NFT Grid */}
       <section className="container mx-auto px-4 py-16">
         <h3 className="text-2xl font-semibold text-white mb-8">Featured NFTs</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {listedNFTs.map((nft, index) => (
-            <div key={nft.id} className="animate-fade-in">
-              <NFTCard
-                title={nft.title}
-                artist={nft.artist}
-                image={nft.image_url}
-                price={nft.price.toString()}
-                onPlay={() => handlePlayTrack(index)}
-              />
-            </div>
-          ))}
-        </div>
+        {listedNFTs.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-xl text-gray-400">
+              No One has Released Anything Yet, But something good is Coming
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {listedNFTs.map((nft, index) => (
+              <div key={nft.id} className="animate-fade-in">
+                <NFTCard
+                  title={nft.title}
+                  artist={nft.artist}
+                  image={nft.image_url}
+                  price={nft.price.toString()}
+                  onPlay={() => handlePlayTrack(index)}
+                />
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Music Player */}

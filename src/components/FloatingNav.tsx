@@ -18,8 +18,8 @@ export function FloatingNav() {
     <div 
       className={`${
         isMobile 
-          ? 'fixed bottom-0 left-0 right-0 bg-black/90 border-t border-white/10'
-          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg hover:w-40 w-[52px]'
+          ? 'fixed bottom-0 left-0 right-0 bg-black/90 border-t border-white/10 pb-safe'
+          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg group hover:w-40 w-[52px]'
       } z-40 transition-all duration-300`}
     >
       <div className={`flex ${isMobile ? 'justify-around py-2 px-4' : 'flex-col gap-2 p-4'}`}>
@@ -29,15 +29,15 @@ export function FloatingNav() {
             variant="ghost"
             className={`bg-primary/20 hover:bg-primary/40 text-white transition-all duration-300 w-full ${
               isMobile 
-                ? 'flex flex-col items-center gap-1 p-2'
+                ? 'flex flex-col items-center gap-1 p-1 text-xs'
                 : 'flex items-center justify-start gap-2'
             }`}
             onClick={() => navigate(path)}
           >
-            <Icon className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'} shrink-0`} />
+            <Icon className={`${isMobile ? 'h-5 w-5' : 'h-5 w-5'} shrink-0`} />
             <span className={`text-sm whitespace-nowrap ${
               isMobile 
-                ? 'block' 
+                ? 'block text-xs' 
                 : 'opacity-0 group-hover:opacity-100 transition-opacity duration-300'
             }`}>
               {label}
