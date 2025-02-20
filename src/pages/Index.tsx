@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NFTCard from "@/components/NFTCard";
@@ -11,7 +12,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { nfts, isLoading } = useNFTs();
+  const { nfts, isLoading, createNFT } = useNFTs(); // Added createNFT here
   const queryClient = useQueryClient();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(-1);
 
