@@ -27,18 +27,18 @@ export function FloatingNav() {
           <Button
             key={path}
             variant="ghost"
-            className={`bg-primary/20 hover:bg-primary/40 text-white group ${
+            className={`bg-primary/20 hover:bg-primary/40 text-white group transition-all duration-300 ${
               isMobile 
                 ? 'flex flex-col items-center gap-1 p-2'
-                : 'flex items-center gap-2 relative'
+                : 'flex items-center justify-start gap-2 w-10 hover:w-32'
             }`}
             onClick={() => navigate(path)}
           >
-            <Icon className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'}`} />
-            <span className={`text-sm ${
+            <Icon className={`${isMobile ? 'h-8 w-8' : 'h-5 w-5'} shrink-0`} />
+            <span className={`text-sm whitespace-nowrap ${
               isMobile 
                 ? 'block' 
-                : 'hidden group-hover:block absolute left-full ml-2 whitespace-nowrap bg-black/90 px-2 py-1 rounded'
+                : 'hidden group-hover:block'
             }`}>
               {label}
             </span>
