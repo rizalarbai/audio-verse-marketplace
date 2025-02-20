@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NFTCard from "@/components/NFTCard";
@@ -10,11 +9,13 @@ import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const { nfts, isLoading, createNFT } = useNFTs();
+  const { nfts, isLoading } = useNFTs();
   const queryClient = useQueryClient();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number>(-1);
+
+  const listedNFTs = nfts?.filter(nft => nft.is_listed) || [];
 
   const createSampleNFTs = async () => {
     const sampleNFTs = [
@@ -69,7 +70,7 @@ const Index = () => {
   };
 
   const handleNextTrack = () => {
-    if (nfts && currentTrackIndex < nfts.length - 1) {
+    if (listedNFTs && currentTrackIndex < listedNFTs.length - 1) {
       setCurrentTrackIndex(currentTrackIndex + 1);
     }
   };
@@ -88,7 +89,7 @@ const Index = () => {
     );
   }
 
-  const currentTrack = nfts && currentTrackIndex >= 0 ? nfts[currentTrackIndex] : undefined;
+  const currentTrack = listedNFTs && currentTrackIndex >= 0 ? listedNFTs[currentTrackIndex] : undefined;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-secondary to-black">
@@ -131,7 +132,7 @@ const Index = () => {
       <section className="container mx-auto px-4 py-16">
         <h3 className="text-2xl font-semibold text-white mb-8">Featured NFTs</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {nfts?.map((nft, index) => (
+          {listedNFTs.map((nft, index) => (
             <div key={nft.id} className="animate-fade-in">
               <NFTCard
                 title={nft.title}
@@ -148,7 +149,7 @@ const Index = () => {
       {/* Music Player */}
       <MusicPlayer 
         currentTrack={currentTrack}
-        onNext={currentTrackIndex < (nfts?.length || 0) - 1 ? handleNextTrack : undefined}
+        onNext={currentTrackIndex < (listedNFTs?.length || 0) - 1 ? handleNextTrack : undefined}
         onPrevious={currentTrackIndex > 0 ? handlePreviousTrack : undefined}
       />
     </div>
