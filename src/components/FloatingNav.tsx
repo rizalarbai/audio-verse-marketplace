@@ -19,7 +19,7 @@ export function FloatingNav() {
       className={`${
         isMobile 
           ? 'fixed bottom-0 left-0 right-0 bg-black/90 border-t border-white/10 pb-safe'
-          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg group hover:w-40 w-[500px]'
+          : 'fixed right-4 top-1/2 -translate-y-1/2 bg-black/20 backdrop-blur-sm rounded-lg group hover:w-40 w-[80px]'
       } z-40 transition-all duration-300`}
     >
       <div className={`flex ${isMobile ? 'justify-around py-2 px-4' : 'flex-col gap-2 p-4'}`}>
