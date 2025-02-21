@@ -16,6 +16,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Card } from "./ui/card";
+import { initializeWeb3Storage, uploadToIPFS } from "@/lib/web3storage";
+import { useNFTs } from "@/hooks/useNFTs";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   artistName: z.string().min(1, "Artist name is required"),
@@ -35,6 +38,8 @@ type FormValues = z.infer<typeof formSchema>;
 
 export function MusicNFTForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { createNFT } = useNFTs();
+  const { user } = useAuth();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -48,11 +53,49 @@ export function MusicNFTForm() {
   });
 
   const onSubmit = async (data: FormValues) => {
+    if (!user) {
+      toast.error("Please sign in to create NFTs");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
-      console.log("Form data:", data);
-      // TODO: Implement NFT minting logic here
-      toast.success("NFT creation initiated!");
+
+      // Initialize web3.storage with your token
+      initializeWeb3Storage(import.meta.env.VITE_WEB3_STORAGE_TOKEN);
+
+      // Prepare files for upload
+      const files = [
+        new File([data.audioFile], `${data.songTitle}-audio.${data.audioFile.name.split('.').pop()}`, {
+          type: data.audioFile.type
+        }),
+        new File([data.coverArt], `${data.songTitle}-cover.${data.coverArt.name.split('.').pop()}`, {
+          type: data.coverArt.type
+        })
+      ];
+
+      // Upload to IPFS
+      const { urls: [audioUrl, imageUrl] } = await uploadToIPFS(files);
+
+      // Create NFT in Supabase
+      await createNFT({
+        title: data.songTitle,
+        artist: data.artistName,
+        price: 0, // Initial price set to 0 since it's not listed yet
+        image_url: imageUrl,
+        audio_url: audioUrl,
+        owner_id: user.id,
+        is_listed: false,
+        metadata: {
+          songwriter: data.songWriter,
+          producer: data.producer,
+          availableCopies: data.availableCopies,
+          totalCopies: data.availableCopies,
+        }
+      });
+
+      toast.success("NFT created successfully!");
+      form.reset();
     } catch (error) {
       console.error("Error creating NFT:", error);
       toast.error("Failed to create NFT");
