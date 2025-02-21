@@ -3,8 +3,9 @@ import { Web3Storage } from 'web3.storage';
 
 let client: Web3Storage;
 
-export const initializeWeb3Storage = (token: string) => {
-  client = new Web3Storage({ token });
+export const initializeWeb3Storage = (did: string) => {
+  // The Web3Storage constructor accepts either a token or a DID
+  client = new Web3Storage({ token: did });
 };
 
 export const uploadToIPFS = async (files: File[]) => {
