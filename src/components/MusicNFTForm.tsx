@@ -61,8 +61,8 @@ export function MusicNFTForm() {
     try {
       setIsSubmitting(true);
 
-      // Initialize web3.storage with your token
-      initializeWeb3Storage(import.meta.env.VITE_WEB3_STORAGE_TOKEN);
+      // Initialize web3.storage with the DID from environment variables
+      initializeWeb3Storage(import.meta.env.VITE_WEB3_STORAGE_DID);
 
       // Prepare files for upload
       const files = [
