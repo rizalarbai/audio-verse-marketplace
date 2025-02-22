@@ -28,7 +28,7 @@ export function MusicNFTForm() {
           .from('secrets')
           .select('value')
           .eq('name', 'WEB3_STORAGE_DID')
-          .single();
+          .maybeSingle(); // Changed from .single() to .maybeSingle()
 
         if (error) {
           console.error('Error fetching Web3Storage DID:', error);
