@@ -4,6 +4,9 @@ import { Web3Storage } from 'web3.storage';
 let client: Web3Storage;
 
 export const initializeWeb3Storage = (did: string) => {
+  if (!did) {
+    throw new Error('DID token is required to initialize Web3Storage');
+  }
   // The Web3Storage constructor accepts either a token or a DID
   client = new Web3Storage({ token: did });
 };
