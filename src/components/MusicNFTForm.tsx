@@ -32,14 +32,20 @@ export function MusicNFTForm() {
 
         if (error) {
           console.error('Error fetching Web3Storage DID:', error);
+          toast.error("Failed to load Web3Storage configuration");
           return;
         }
 
-        if (data) {
+        if (data?.value) {
+          console.log("Web3Storage DID loaded successfully");
           setWeb3StorageDID(data.value);
+        } else {
+          console.error('Web3Storage DID not found in secrets');
+          toast.error("Web3Storage configuration not found");
         }
       } catch (error) {
         console.error('Error fetching Web3Storage DID:', error);
+        toast.error("Failed to load Web3Storage configuration");
       }
     };
 
@@ -70,8 +76,6 @@ export function MusicNFTForm() {
 
     try {
       setIsSubmitting(true);
-
-      console.log("Initializing Web3Storage...");
       initializeWeb3Storage(web3StorageDID);
 
       // Prepare files for upload
@@ -124,7 +128,7 @@ export function MusicNFTForm() {
           
           <Button 
             type="submit" 
-            disabled={isSubmitting || !web3StorageDID}
+            disabled={isSubmitting}
             className="w-full bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? "Creating NFT..." : "Create NFT"}

@@ -13,20 +13,6 @@ export function SongDetails({ form }: SongDetailsProps) {
     <>
       <FormField
         control={form.control}
-        name="songTitle"
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel className="text-white">Song Title</FormLabel>
-            <FormControl>
-              <Input placeholder="Enter song title" {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
-
-      <FormField
-        control={form.control}
         name="availableCopies"
         render={({ field }) => (
           <FormItem>
