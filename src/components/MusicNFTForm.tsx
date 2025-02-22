@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -13,11 +13,38 @@ import { ArtistInfoFields } from "./nft-form/ArtistInfoFields";
 import { SongDetails } from "./nft-form/SongDetails";
 import { FileUploadFields } from "./nft-form/FileUploadFields";
 import { NFTFormValues, nftFormSchema } from "./nft-form/types";
+import { supabase } from "@/lib/supabase";
 
 export function MusicNFTForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createNFT } = useNFTs();
   const { user } = useAuth();
+  const [web3StorageDID, setWeb3StorageDID] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchDID = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('secrets')
+          .select('value')
+          .eq('name', 'WEB3_STORAGE_DID')
+          .single();
+
+        if (error) {
+          console.error('Error fetching Web3Storage DID:', error);
+          return;
+        }
+
+        if (data) {
+          setWeb3StorageDID(data.value);
+        }
+      } catch (error) {
+        console.error('Error fetching Web3Storage DID:', error);
+      }
+    };
+
+    fetchDID();
+  }, []);
 
   const form = useForm<NFTFormValues>({
     resolver: zodResolver(nftFormSchema),
@@ -36,17 +63,16 @@ export function MusicNFTForm() {
       return;
     }
 
+    if (!web3StorageDID) {
+      toast.error("Web3Storage DID token is not configured");
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
-      const did = import.meta.env.VITE_WEB3_STORAGE_DID;
-      if (!did) {
-        toast.error("Web3Storage DID token is not configured");
-        return;
-      }
-
-      console.log("Initializing Web3Storage with DID:", did); // Debug log
-      initializeWeb3Storage(did);
+      console.log("Initializing Web3Storage...");
+      initializeWeb3Storage(web3StorageDID);
 
       // Prepare files for upload
       const files = [
@@ -98,7 +124,7 @@ export function MusicNFTForm() {
           
           <Button 
             type="submit" 
-            disabled={isSubmitting}
+            disabled={isSubmitting || !web3StorageDID}
             className="w-full bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? "Creating NFT..." : "Create NFT"}
