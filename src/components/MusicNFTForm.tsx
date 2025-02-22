@@ -39,8 +39,14 @@ export function MusicNFTForm() {
     try {
       setIsSubmitting(true);
 
-      // Initialize web3.storage with the DID from environment variables
-      initializeWeb3Storage(import.meta.env.VITE_WEB3_STORAGE_DID);
+      const did = import.meta.env.VITE_WEB3_STORAGE_DID;
+      if (!did) {
+        toast.error("Web3Storage DID token is not configured");
+        return;
+      }
+
+      console.log("Initializing Web3Storage with DID:", did); // Debug log
+      initializeWeb3Storage(did);
 
       // Prepare files for upload
       const files = [
