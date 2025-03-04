@@ -19,38 +19,39 @@ export function MusicNFTForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createNFT } = useNFTs();
   const { user } = useAuth();
-  const [web3StorageDID, setWeb3StorageDID] = useState<string | null>(null);
+  const [web3StorageToken, setWeb3StorageToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchDID = async () => {
+    const fetchToken = async () => {
       try {
+        // Try to fetch the Web3.storage API token instead of DID
         const { data: secretData, error: secretError } = await supabase
           .from('secrets')
           .select('value')
-          .eq('name', 'WEB3_STORAGE_DID')
+          .eq('name', 'WEB3_STORAGE_TOKEN')
           .maybeSingle();
 
         if (secretError) {
-          console.error('Error fetching Web3Storage DID:', secretError);
+          console.error('Error fetching Web3Storage token:', secretError);
           toast.error("Failed to load Web3Storage configuration");
           return;
         }
 
         if (!secretData) {
-          console.error('Web3Storage DID not found in secrets');
-          toast.error("Web3Storage configuration not found");
+          console.error('Web3Storage token not found in secrets');
+          toast.error("Web3Storage API token not found. Please set it in your Supabase secrets.");
           return;
         }
 
-        console.log("Web3Storage DID loaded successfully");
-        setWeb3StorageDID(secretData.value);
+        console.log("Web3Storage token loaded successfully");
+        setWeb3StorageToken(secretData.value);
       } catch (error) {
-        console.error('Error in fetchDID:', error);
+        console.error('Error in fetchToken:', error);
         toast.error("Failed to load Web3Storage configuration");
       }
     };
 
-    fetchDID();
+    fetchToken();
   }, []);
 
   const form = useForm<NFTFormValues>({
@@ -70,15 +71,15 @@ export function MusicNFTForm() {
       return;
     }
 
-    if (!web3StorageDID) {
-      toast.error("Web3Storage DID token is not configured");
+    if (!web3StorageToken) {
+      toast.error("Web3Storage API token is not configured");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      console.log("Initializing Web3Storage with DID token...");
-      initializeWeb3Storage(web3StorageDID);
+      console.log("Initializing Web3Storage with API token...");
+      initializeWeb3Storage(web3StorageToken);
 
       console.log("Preparing files for upload...");
       const files = [
@@ -115,7 +116,7 @@ export function MusicNFTForm() {
       form.reset();
     } catch (error) {
       console.error("Error creating NFT:", error);
-      toast.error("Failed to create NFT");
+      toast.error(`Failed to create NFT: ${error.message}`);
     } finally {
       setIsSubmitting(false);
     }
