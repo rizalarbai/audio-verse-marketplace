@@ -1,52 +1,57 @@
 
+// Using web3.storage as the library but connecting to Storacha Network
 import { Web3Storage } from 'web3.storage';
 
 let client: Web3Storage;
 
-// Initialize the Web3Storage client with the token
+// Initialize the Web3Storage client with the token but pointing to Storacha Network
 export const initializeWeb3Storage = (token: string) => {
   if (!token) {
-    throw new Error('Token is required to initialize Web3Storage');
+    throw new Error('Token is required to initialize storage client');
   }
   
-  client = new Web3Storage({ token });
+  // Create client with the token and configure for Storacha Network
+  client = new Web3Storage({ 
+    token,
+    endpoint: new URL('https://api.storacha.network') // Use Storacha Network endpoint instead
+  });
+  
+  console.log('Storage client initialized with Storacha Network endpoint');
 };
 
-// Upload files to IPFS
+// Upload files to IPFS via Storacha Network
 export const uploadToIPFS = async (files: File[]) => {
   if (!client) {
-    throw new Error('Web3Storage client not initialized');
+    throw new Error('Storage client not initialized');
   }
 
   try {
-    console.log(`Uploading ${files.length} files to Web3.storage...`);
+    console.log(`Uploading ${files.length} files to Storacha Network...`);
     
-    // Upload files to Web3.Storage
+    // Upload files to Storacha Network
     const cid = await client.put(files, {
-      maxRetries: 3,
+      maxRetries: 5,
       wrapWithDirectory: true,
     });
     
     console.log(`Upload successful! CID: ${cid}`);
     
     // Create gateway URLs for each file
-    // Using both IPFS gateway options for redundancy
-    const ipfsGateway = `https://${cid}.ipfs.dweb.link/`;
-    const w3sGateway = `https://${cid}.ipfs.w3s.link/`;
+    // Using Storacha Network gateways for content delivery
+    const storachaGateway = `https://gateway.storacha.network/ipfs/${cid}/`;
     
     const urls = files.map(file => ({
       filename: file.name,
-      ipfs: `${ipfsGateway}${encodeURIComponent(file.name)}`,
-      w3s: `${w3sGateway}${encodeURIComponent(file.name)}`
+      storacha: `${storachaGateway}${encodeURIComponent(file.name)}`,
     }));
     
     return {
       cid,
-      urls: urls.map(url => url.w3s), // Use the w3s gateway URLs by default
+      urls: urls.map(url => url.storacha), // Use Storacha gateway URLs
       allUrls: urls, // Provide all URL options
     };
   } catch (error) {
-    console.error('Error uploading to IPFS:', error);
-    throw new Error(`Failed to upload to IPFS: ${error.message}`);
+    console.error('Error uploading to Storacha Network:', error);
+    throw new Error(`Failed to upload to Storacha Network: ${error.message}`);
   }
 };

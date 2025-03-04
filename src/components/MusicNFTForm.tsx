@@ -19,35 +19,49 @@ export function MusicNFTForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { createNFT } = useNFTs();
   const { user } = useAuth();
-  const [web3StorageToken, setWeb3StorageToken] = useState<string | null>(null);
+  const [storageToken, setStorageToken] = useState<string | null>(null);
+  const [tokenError, setTokenError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        // Try to fetch the Web3.storage API token instead of DID
+        // Try to fetch the Storacha Network API token
         const { data: secretData, error: secretError } = await supabase
           .from('secrets')
           .select('value')
-          .eq('name', 'WEB3_STORAGE_TOKEN')
+          .eq('name', 'STORACHA_API_TOKEN')
           .maybeSingle();
 
         if (secretError) {
-          console.error('Error fetching Web3Storage token:', secretError);
-          toast.error("Failed to load Web3Storage configuration");
+          console.error('Error fetching Storacha API token:', secretError);
+          setTokenError("Failed to load Storacha configuration");
           return;
         }
 
         if (!secretData) {
-          console.error('Web3Storage token not found in secrets');
-          toast.error("Web3Storage API token not found. Please set it in your Supabase secrets.");
+          // Fall back to WEB3_STORAGE_TOKEN if STORACHA_API_TOKEN doesn't exist
+          const { data: web3Data, error: web3Error } = await supabase
+            .from('secrets')
+            .select('value')
+            .eq('name', 'WEB3_STORAGE_TOKEN')
+            .maybeSingle();
+            
+          if (web3Error || !web3Data) {
+            console.error('Storage API token not found in secrets');
+            setTokenError("Storage API token not found. Please set a STORACHA_API_TOKEN in your Supabase secrets.");
+            return;
+          }
+          
+          console.log("Using Web3.Storage token with Storacha Network");
+          setStorageToken(web3Data.value);
           return;
         }
 
-        console.log("Web3Storage token loaded successfully");
-        setWeb3StorageToken(secretData.value);
+        console.log("Storacha API token loaded successfully");
+        setStorageToken(secretData.value);
       } catch (error) {
         console.error('Error in fetchToken:', error);
-        toast.error("Failed to load Web3Storage configuration");
+        setTokenError("Failed to load storage configuration");
       }
     };
 
@@ -71,15 +85,15 @@ export function MusicNFTForm() {
       return;
     }
 
-    if (!web3StorageToken) {
-      toast.error("Web3Storage API token is not configured");
+    if (!storageToken) {
+      toast.error(tokenError || "Storage API token is not configured");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      console.log("Initializing Web3Storage with API token...");
-      initializeWeb3Storage(web3StorageToken);
+      console.log("Initializing storage client with API token...");
+      initializeWeb3Storage(storageToken);
 
       console.log("Preparing files for upload...");
       const files = [
@@ -91,7 +105,7 @@ export function MusicNFTForm() {
         })
       ];
 
-      console.log("Uploading files to IPFS...");
+      console.log("Uploading files to Storacha Network...");
       const { urls: [audioUrl, imageUrl] } = await uploadToIPFS(files);
       console.log("Files uploaded successfully:", { audioUrl, imageUrl });
 
@@ -124,6 +138,12 @@ export function MusicNFTForm() {
 
   return (
     <Card className="p-6 bg-white/10 backdrop-blur-lg border-white/20">
+      {tokenError && (
+        <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 rounded text-red-200">
+          <p>{tokenError}</p>
+          <p className="text-sm mt-1">You need to add a STORACHA_API_TOKEN in your Supabase secrets to create NFTs.</p>
+        </div>
+      )}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
           <ArtistInfoFields form={form} />
@@ -132,7 +152,7 @@ export function MusicNFTForm() {
           
           <Button 
             type="submit" 
-            disabled={isSubmitting}
+            disabled={isSubmitting || !!tokenError}
             className="w-full bg-primary hover:bg-primary/90"
           >
             {isSubmitting ? "Creating NFT..." : "Create NFT"}
