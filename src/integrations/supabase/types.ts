@@ -9,6 +9,153 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      "MILIKI-nft_music": {
+        Row: {
+          artist: string
+          cover_image_cid: string | null
+          cover_image_url: string | null
+          created_at: string
+          creator_id: string | null
+          description: string | null
+          id: string
+          is_listed: boolean
+          metadata: Json
+          music_file_cid: string | null
+          music_file_url: string
+          owner_id: string | null
+          price: number | null
+          title: string
+          token_id: string | null
+          updated_at: string
+          wallet_id: string | null
+        }
+        Insert: {
+          artist: string
+          cover_image_cid?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          is_listed?: boolean
+          metadata?: Json
+          music_file_cid?: string | null
+          music_file_url: string
+          owner_id?: string | null
+          price?: number | null
+          title: string
+          token_id?: string | null
+          updated_at?: string
+          wallet_id?: string | null
+        }
+        Update: {
+          artist?: string
+          cover_image_cid?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          creator_id?: string | null
+          description?: string | null
+          id?: string
+          is_listed?: boolean
+          metadata?: Json
+          music_file_cid?: string | null
+          music_file_url?: string
+          owner_id?: string | null
+          price?: number | null
+          title?: string
+          token_id?: string | null
+          updated_at?: string
+          wallet_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "MILIKI-nft_music_creator_id_fkey"
+            columns: ["creator_id"]
+            isOneToOne: false
+            referencedRelation: "MILIKI-profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "MILIKI-nft_music_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "MILIKI-profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "MILIKI-nft_music_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "MILIKI-wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      "MILIKI-profiles": {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id: string
+          updated_at?: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
+      "MILIKI-wallets": {
+        Row: {
+          address: string
+          balance: number
+          created_at: string
+          id: string
+          is_active: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address: string
+          balance?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string
+          balance?: number
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "MILIKI-wallets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "MILIKI-profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       nfts: {
         Row: {
           artist: string

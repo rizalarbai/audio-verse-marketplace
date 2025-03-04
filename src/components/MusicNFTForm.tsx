@@ -24,27 +24,28 @@ export function MusicNFTForm() {
   useEffect(() => {
     const fetchDID = async () => {
       try {
-        const { data, error } = await supabase
+        const { data: secretData, error: secretError } = await supabase
           .from('secrets')
           .select('value')
           .eq('name', 'WEB3_STORAGE_DID')
-          .maybeSingle(); // Changed from .single() to .maybeSingle()
+          .maybeSingle();
 
-        if (error) {
-          console.error('Error fetching Web3Storage DID:', error);
+        if (secretError) {
+          console.error('Error fetching Web3Storage DID:', secretError);
           toast.error("Failed to load Web3Storage configuration");
           return;
         }
 
-        if (data?.value) {
-          console.log("Web3Storage DID loaded successfully");
-          setWeb3StorageDID(data.value);
-        } else {
+        if (!secretData) {
           console.error('Web3Storage DID not found in secrets');
           toast.error("Web3Storage configuration not found");
+          return;
         }
+
+        console.log("Web3Storage DID loaded successfully");
+        setWeb3StorageDID(secretData.value);
       } catch (error) {
-        console.error('Error fetching Web3Storage DID:', error);
+        console.error('Error in fetchDID:', error);
         toast.error("Failed to load Web3Storage configuration");
       }
     };
@@ -76,9 +77,10 @@ export function MusicNFTForm() {
 
     try {
       setIsSubmitting(true);
+      console.log("Initializing Web3Storage with DID token...");
       initializeWeb3Storage(web3StorageDID);
 
-      // Prepare files for upload
+      console.log("Preparing files for upload...");
       const files = [
         new File([data.audioFile], `${data.songTitle}-audio.${data.audioFile.name.split('.').pop()}`, {
           type: data.audioFile.type
@@ -88,10 +90,11 @@ export function MusicNFTForm() {
         })
       ];
 
-      // Upload to IPFS
+      console.log("Uploading files to IPFS...");
       const { urls: [audioUrl, imageUrl] } = await uploadToIPFS(files);
+      console.log("Files uploaded successfully:", { audioUrl, imageUrl });
 
-      // Create NFT in Supabase
+      console.log("Creating NFT in Supabase...");
       await createNFT({
         title: data.songTitle,
         artist: data.artistName,
