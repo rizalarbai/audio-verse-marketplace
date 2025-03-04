@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -39,24 +38,11 @@ export function MusicNFTForm() {
         }
 
         if (!secretData) {
-          // Fall back to WEB3_STORAGE_TOKEN if STORACHA_API_TOKEN doesn't exist
-          const { data: web3Data, error: web3Error } = await supabase
-            .from('secrets')
-            .select('value')
-            .eq('name', 'WEB3_STORAGE_TOKEN')
-            .maybeSingle();
-            
-          if (web3Error || !web3Data) {
-            console.error('Storage API token not found in secrets');
-            setTokenError("Storage API token not found. Please set a STORACHA_API_TOKEN in your Supabase secrets.");
-            return;
-          }
-          
-          console.log("Using Web3.Storage token with Storacha Network");
-          setStorageToken(web3Data.value);
+          console.error('Storacha API token not found in secrets');
+          setTokenError("Storacha API token not found. Please set a STORACHA_API_TOKEN in your Supabase secrets.");
           return;
         }
-
+          
         console.log("Storacha API token loaded successfully");
         setStorageToken(secretData.value);
       } catch (error) {

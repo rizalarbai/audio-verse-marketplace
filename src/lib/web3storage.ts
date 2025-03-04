@@ -10,13 +10,12 @@ export const initializeWeb3Storage = (token: string) => {
     throw new Error('Token is required to initialize storage client');
   }
   
-  // Create client with the token and configure for Storacha Network
-  client = new Web3Storage({ 
-    token,
-    endpoint: new URL('https://api.storacha.network') // Use Storacha Network endpoint instead
-  });
+  // Create client with the token
+  // Note: Storacha Network is compatible with web3.storage API
+  // but requires using their token and gateways for content access
+  client = new Web3Storage({ token });
   
-  console.log('Storage client initialized with Storacha Network endpoint');
+  console.log('Storage client initialized with Storacha Network token');
 };
 
 // Upload files to IPFS via Storacha Network
