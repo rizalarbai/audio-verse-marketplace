@@ -24,26 +24,26 @@ export function MusicNFTForm() {
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        // Try to fetch the Storacha Network API token
+        // Fetch the Storacha Network token
         const { data: secretData, error: secretError } = await supabase
           .from('secrets')
           .select('value')
-          .eq('name', 'STORACHA_API_TOKEN')
+          .eq('name', 'STORACHA_TOKEN')
           .maybeSingle();
 
         if (secretError) {
-          console.error('Error fetching Storacha API token:', secretError);
+          console.error('Error fetching Storacha token:', secretError);
           setTokenError("Failed to load Storacha configuration");
           return;
         }
 
         if (!secretData) {
-          console.error('Storacha API token not found in secrets');
-          setTokenError("Storacha API token not found. Please set a STORACHA_API_TOKEN in your Supabase secrets.");
+          console.error('Storacha token not found in secrets');
+          setTokenError("Storacha token not found. Please set a STORACHA_TOKEN in your Supabase secrets.");
           return;
         }
           
-        console.log("Storacha API token loaded successfully");
+        console.log("Storacha token loaded successfully");
         setStorageToken(secretData.value);
       } catch (error) {
         console.error('Error in fetchToken:', error);
@@ -72,13 +72,13 @@ export function MusicNFTForm() {
     }
 
     if (!storageToken) {
-      toast.error(tokenError || "Storage API token is not configured");
+      toast.error(tokenError || "Storacha token is not configured");
       return;
     }
 
     try {
       setIsSubmitting(true);
-      console.log("Initializing storage client with API token...");
+      console.log("Initializing Storacha Network client...");
       initializeWeb3Storage(storageToken);
 
       console.log("Preparing files for upload...");
@@ -127,7 +127,7 @@ export function MusicNFTForm() {
       {tokenError && (
         <div className="mb-4 p-3 bg-red-500/20 border border-red-500/40 rounded text-red-200">
           <p>{tokenError}</p>
-          <p className="text-sm mt-1">You need to add a STORACHA_API_TOKEN in your Supabase secrets to create NFTs.</p>
+          <p className="text-sm mt-1">You need to add a STORACHA_TOKEN in your Supabase secrets to create NFTs.</p>
         </div>
       )}
       <Form {...form}>
